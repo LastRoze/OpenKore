@@ -200,7 +200,7 @@ sub giveUp {
 	message T("Can't reach or damage target, dropping target\n"), "ai_attack";
 	if ($config{'teleportAuto_dropTarget'}) {
 		message T("Teleport due to dropping attack target\n");
-		useTeleport(1);
+		ai_useTeleport(1);
 	}
 }
 
@@ -251,11 +251,12 @@ sub finishAttacking {
 
 	} elsif ($config{teleportAuto_lostTarget}) {
 		message T("Target lost, teleporting.\n"), "ai_attack";
-		useTeleport(1);
+		ai_useTeleport(1);
 	} else {
 		message T("Target lost\n"), "ai_attack";
 	}
 
+	$messageSender->sendStopSkillUse($char->{last_continuous_skill_used}) if $char->{last_skill_used_is_continuous};
 	Plugins::callHook('attack_end', {ID => $ID})
 
 }
@@ -274,7 +275,7 @@ sub dropTargetWhileMoving {
 	AI::dequeue while (AI::inQueue("attack"));
 	if ($config{teleportAuto_dropTargetKS}) {
 		message T("Teleport due to dropping attack target\n");
-		useTeleport(1);
+		ai_useTeleport(1);
 	}
 }
 
@@ -432,7 +433,7 @@ sub main {
 		AI::dequeue while (AI::inQueue("attack"));
 		if ($config{teleportAuto_dropTargetKS}) {
 			message T("Teleport due to dropping attack target\n"), "teleport";
-			useTeleport(1);
+			ai_useTeleport(1);
 		}
 
 	} elsif ($config{'runFromTarget'} && ($realMonsterDist < $config{'runFromTarget_dist'} || $hitYou)) {
@@ -525,7 +526,7 @@ sub main {
 				message T("Unable to calculate a route to target, dropping target\n"), "ai_attack";
 				if ($config{'teleportAuto_dropTarget'}) {
 					message T("Teleport due to dropping attack target\n");
-					useTeleport(1);
+					ai_useTeleport(1);
 				}
 			} else {
 				debug "Attack $char - successufully routing to $target\n", 'ai_attack';
@@ -536,7 +537,7 @@ sub main {
 			message T("Unable to calculate a meetingPosition to target, dropping target\n"), "ai_attack";
 			if ($config{'teleportAuto_dropTarget'}) {
 				message T("Teleport due to dropping attack target\n");
-				useTeleport(1);
+				ai_useTeleport(1);
 			}
 		}
 
@@ -654,6 +655,7 @@ sub main {
 				"attackSkillSlot_${slot}",
 				undef,
 				"attackSkill",
+				$config{"attackSkillSlot_${slot}_isStartSkill"} ? 1 : 0,
 			);
 			$args->{monsterID} = $ID;
 			my $skill_lvl = $config{"attackSkillSlot_${slot}_lvl"} || $char->getSkillLevel($skill);

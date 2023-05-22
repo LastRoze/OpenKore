@@ -137,6 +137,7 @@ autoResponseOnHeal 0
 
 autoSpell
 autoSpell_safe
+autoPoison
 
 avoidGM_namePattern
 avoidGM_near 0
@@ -189,6 +190,8 @@ itemsTakeAuto 2
 itemsTakeAuto_party 0
 itemsGatherAuto 2
 itemsGatherAuto_notInTown 0
+itemsGatherAutoMinPlayerDistance 6
+itemsGatherAutoMinPortalDistance 5
 itemsMaxWeight 89
 itemsMaxWeight_sellOrStore 48
 itemsMaxNum_sellOrStore 99
@@ -562,6 +565,7 @@ attackSkillSlot {
 	whenPartyMembersNearDist
 	inInventory
 	isSelfSkill 0
+	isStartSkill 0
 	equip_topHead
 	equip_midHead
 	equip_lowHead
